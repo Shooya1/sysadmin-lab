@@ -5,147 +5,149 @@ Set up a secure Linux environment for a new department by creating users, managi
 
 Environment
 
-OS: Ubuntu Server 22.04 LTS
+*  OS: Ubuntu Server 22.04 LTS
 
-VM Platform: VirtualBox
+*  VM Platform: VirtualBox
 
-RAM: 2 GB
+*  RAM: 2 GB
 
-Disk: 20 GB
+*  Disk: 20 GB
 
-Access Method: SSH
+*  Access Method: SSH
 
-Privileges: sudo (no direct root login)
+*  Privileges: sudo (no direct root login)
 
 Requirements
 
-Create a department group named engineering
+1.  Create a department group named engineering
 
-Create two users: eng01 and eng02
+2.  Create two users: eng01 and eng02
 
-Restrict access to the department directory to engineering members only
+3.  Restrict access to the department directory to engineering members only
 
-Disable login access for eng02
+4.  Disable login access for eng02
 
-Create a shared file readable by both users
+5.  Create a shared file readable by both users
 
-Allow only eng01 to modify the shared file
+6.  Allow only eng01 to modify the shared file
 
-Verify all permissions and restrictions
+*  Verify all permissions and restrictions
 
 Implementation
 1. Group Creation
 
-A dedicated group was created to manage department-level permissions efficiently and avoid per-user permission management.
+   A dedicated group was created to manage department-level permissions efficiently and avoid per-user permission management.
 
-Group name: engineering
-Command: sudo groupadd engineering
+   *  Group name: engineering
 
-This allows access control to be managed at the group level instead of assigning permissions individually.
+   *  Command: sudo groupadd engineering
+
+   This allows access control to be managed at the group level instead of assigning permissions individually.
 
 2. User Creation and Group Assignment
 
-Two users were created and added to the engineering group.
+   Two users were created and added to the engineering group.
 
 
-eng01 – active employee
+    *  eng01 – active employee
 
-eng02 – access suspended (HR issue)
+    *  eng02 – access suspended (HR issue)
 
-Commands: sudo adduser eng01
-          sudo adduser eng02
+    *  Commands: sudo adduser eng01
+              sudo adduser eng02
 
-Both users were assigned to the same group to inherit directory-level permissions.
+    Both users were assigned to the same group to inherit directory-level permissions.
 
 3. Department Directory Setup
 
-A directory was created to store engineering resources.
+   A directory was created to store engineering resources.
 
-Directory: /engineering_dept
+   *  Directory: /engineering_dept
 
-Ownership: root:engineering
+   *  Ownership: root:engineering
 
-Permissions were set so that:
+   Permissions were set so that:
 
-Only the owner and group members can access the directory
+   *  Only the owner and group members can access the directory
+   *  Other users have no access
+   This prevents unauthorized access from users outside the department.
 
-Other users have no access
+5. Login Restriction
 
-This prevents unauthorized access from users outside the department.
+   Login access for eng02 was disabled without deleting the account.
 
-4. Login Restriction
+   Reason:
 
-Login access for eng02 was disabled without deleting the account.
+   *  Account remains for auditing and future reactivation
 
-Reason:
+   *  Access control is enforced without data loss
 
-Account remains for auditing and future reactivation
+   This separates authentication control from file permission control.
 
-Access control is enforced without data loss
+6. Shared File Access Control
 
-This separates authentication control from file permission control.
+   A shared file was created inside the department directory.
 
-5. Shared File Access Control
+   Access rules:
 
-A shared file was created inside the department directory.
+   *  Both users can read the file
 
-Access rules:
+   *  Only eng01 can modify the file
 
-Both users can read the file
+   This was achieved by:
 
-Only eng01 can modify the file
+   *  Assigning ownership of the file to eng01
 
-This was achieved by:
+   *  Keeping group read access
 
-Assigning ownership of the file to eng01
-
-Keeping group read access
-
-Removing group write permissions
+   *  Removing group write permissions
 
 Verification
 Group Membership
 
-Confirmed both users belong to engineering
+*  Confirmed both users belong to engineering
 
-Verified using group inspection commands
+*  Verified using group inspection commands
 
 Login Test
 
-eng01 can log in successfully
+*  eng01 can log in successfully
 
-eng02 login is denied as expected
+*  eng02 login is denied as expected
 
 File Access Test
 
-eng01 can read and modify the shared file
+*  eng01 can read and modify the shared file
 
-eng02 can read the file but receives a permission error when attempting to write
+*  eng02 can read the file but receives a permission error when attempting to write
 
 Directory Access
 
-Users outside engineering cannot access /srv/engineering
+*  Users outside engineering cannot access /srv/engineering
 
 All requirements were successfully met.
 
 Issues Encountered
 
-Initial permission misconfiguration allowed unintended write access
+*  Initial permission misconfiguration allowed unintended write access
 
-Resolved by separating directory permissions from file permissions and re-evaluating ownership
+*  Resolved by separating directory permissions from file permissions and re-evaluating ownership
 
 This reinforced the importance of understanding ownership vs permissions.
 
 Lessons Learned
 
-Groups simplify permission management
+*  Groups simplify permission management
 
-Login access and file access are independent controls
+*  Login access and file access are independent controls
 
-Avoid using overly permissive permissions (e.g. 777)
+*  Avoid using overly permissive permissions (e.g. 777)
 
-Always verify access using the actual user account
+*  Always verify access using the actual user account
 
 Conclusion
 
-The engineering department was successfully onboarded with proper access controls, restricted login enforcement, and documented verification. The system now follows the principle of least privilege and is ready for production use.              
+The engineering department was successfully onboarded with proper access controls, restricted login enforcement, and documented verification. The system now follows the principle of least privilege and is ready for production use. 
+
+<img width="800" height="600" alt="VirtualBo_VM1 1" src="https://github.com/user-attachments/assets/d479a4a4-cc9f-4e56-a515-853e13f01fdb" />
+             
